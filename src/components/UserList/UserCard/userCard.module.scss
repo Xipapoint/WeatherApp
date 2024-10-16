@@ -1,0 +1,65 @@
+@keyframes fadeInFromTopLeft {
+  0% {
+    opacity: 1;
+    transform: scale(0.98) translateY(-25px) translateZ(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0px) translateZ(0px);
+  }
+}
+
+
+.userCard{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 30px 45px rgba(58, 73, 209, .1);
+    height: 500px;
+    width: 300px;
+    margin-right: 100px;
+    margin-bottom: 100px;
+    border-radius: 7px;
+    background-color: #fff;
+    animation: fadeInFromTopLeft 0.2s ease-in-out;
+    img{
+        border-radius: 2px;
+    }
+    .userInfo{
+        font-size: 17px;
+        display: flex;
+        p{
+            width: 50%;
+            height: fit-content;
+            margin-inline: 5px;
+        }
+    }
+    .weatherData{
+        font-size: 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .dailyTemp{
+            display: flex;
+            height: fit-content;
+            p{
+                margin: 0px 10px 0px 10px;
+            }
+        }
+    }
+    button{
+        border: none;
+    }
+    .saveButton{
+        background-color: #e2ffe2;
+        margin-inline: 5px;
+    }
+    .saveButton:hover{
+        background-color: #a9ffa9;
+    }
+    .detailsButton:hover{
+        background-color: #c5c5c5;
+    }
+
+}
