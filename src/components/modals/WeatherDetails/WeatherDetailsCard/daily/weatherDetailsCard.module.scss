@@ -1,0 +1,37 @@
+.dailyCard{
+    border-radius: 10px;
+    box-shadow: 0px 1px 4px 1px #d9d9d9;
+    width: 120px;
+    height: 140px;
+    margin-inline: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .date{
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        p{
+            margin: 0;
+        }
+    }
+    .temp{
+        font-size: 12px;
+        display: flex;
+        justify-content: space-around;
+        width: 90%;
+        height: fit-content;
+        p{
+            display: flex;
+            margin: 0;
+            flex-direction: column;
+        }
+    }
+}
+
+.dailyCard:hover{
+    box-shadow: 0px 1px 5px 1px #a6a6a6;
+    cursor: pointer;
+}

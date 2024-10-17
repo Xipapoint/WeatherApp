@@ -1,4 +1,3 @@
-// user.dto.ts
 export interface Coordinates {
     latitude: string;
     longitude: string;

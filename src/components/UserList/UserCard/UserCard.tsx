@@ -5,6 +5,7 @@ import { useModal } from "../../../utils/hooks/useModal";
 import WeatherDetailsModal from "../../modals/WeatherDetails/WeatherDetailsModal";
 interface UserCardProps {
   user: {
+    key: string
     gender: string
     name: {
       title: string
@@ -15,6 +16,10 @@ interface UserCardProps {
       country: string
       city: string
     },
+    coordinates: {
+      latitude: string
+      longitude: string
+    }
     picture: {
       large: string;
       medium: string;
@@ -50,10 +55,10 @@ const UserCard: React.FC<UserCardProps> = ({ user, weather }) => {
   const weatherIconSize = width <= 480 ? 64 : 90
   const userIconSize = width <= 480 ? 128 : 128
   const handleOpenModal = () => {
-    openModal(<WeatherDetailsModal onClose={closeModal}/>)
+    openModal(<WeatherDetailsModal onClose={closeModal} userData={user.coordinates}/>)
   }
   return (
-    <div className={styles.userCard}>
+    <div key={user.key} className={styles.userCard}>
       <img 
         src={user.picture.large} 
         alt={`${user.name.first} ${user.name.last}`} 

@@ -14,12 +14,18 @@
         background-color: #fff;
         border-radius: 8px;
         padding: 20px;
-        width: 90%;
+        width: 80%;
         min-height: 400px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
 
-        img{
-            
+        .daily{
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .hourly{
+            display: flex;
         }
     }
 }

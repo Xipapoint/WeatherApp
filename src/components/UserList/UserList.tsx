@@ -7,6 +7,7 @@ import { IGetRandomUserResponseDTO } from '../../dto/response/GetRandomUserRespo
 import { userReducer, userInitialState } from '../../reducer/userReducer'
 import { weatherCardReducer, initialWeatherState } from '../../reducer/weatherCardReducer'
 import useErrorToast from '../../utils/hooks/toast'
+import 'react-toastify/dist/ReactToastify.css';
 import styles from './userList.module.scss'
 
 const UserList = () => {
@@ -21,6 +22,7 @@ const UserList = () => {
           const userApi = new UserApi()
           const response = await userApi.getRandomUser(10)
           return response
+          
         } catch (error) {
           handleError(error)
           userDispatch({ type: 'FETCH_USERS_FAILURE', payload: 'Error fetching users' })
@@ -87,14 +89,16 @@ const UserList = () => {
       <h1>All Users</h1>
       <ul className={styles.userList}>
         {userState.users.map((user, index) => (
-          <div key={user.login.uuid}>
+          <div key={index} >
             <UserCard user={{
+              key: user.login.uuid as string,
               gender: user.gender,
               name: user.name,
               location: {
                 country: user.location.country,
                 city: user.location.city
               },
+              coordinates: user.location.coordinates,
               picture: user.picture,
               email: user.email,
               

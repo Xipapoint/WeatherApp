@@ -2,6 +2,7 @@ import { fetchWeatherApi } from "openmeteo"
 import { IGetWeatherForCardRequestDTO } from "../dto/request/GetWeatherForCardRequestDTO"
 import { IGetWeatherForCardResponseDTO } from "../dto/response/GetWeatherForCardResponseDTO"
 import { IGetWeatherDetailsResponseDTO } from "../dto/response/GetWeatherDetailsResponseDTO"
+import { IGetWeatherDetailsRequestDTO } from '../dto/request/GetWeatherDetailsRequestDTO';
 
 export class WeatherApi {
     private weatherApiUrl: string
@@ -30,7 +31,6 @@ export class WeatherApi {
 
             const current = response.current()!;
             const daily = response.daily()!;
-
             const weatherData: IGetWeatherForCardResponseDTO = {
                 current: {
                     time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
@@ -53,29 +53,27 @@ export class WeatherApi {
         return weathersData
     }
 
-    public async getWeatherDetails(weatherDTO: IGetWeatherForCardRequestDTO): Promise<IGetWeatherDetailsResponseDTO>{
+    public async getWeatherDetails(weatherDTO: IGetWeatherDetailsRequestDTO): Promise<IGetWeatherDetailsResponseDTO>{
+        console.log("weather data in api: ", weatherDTO);
+        
         const params = {
-            "latitude": weatherDTO.lat,
-	        "longitude": weatherDTO.long,
+            "latitude": weatherDTO.latitude,
+	        "longitude": weatherDTO.longitude,
             "hourly": ["temperature_2m", "rain", "snowfall", "cloud_cover", "wind_direction_10m"],
             "daily": ["temperature_2m_max", "temperature_2m_min", "sunrise", "sunset"]
-        };
+        }
         const url = "https://api.open-meteo.com/v1/forecast";
         const responses = await fetchWeatherApi(url, params);
-        
         const range = (start: number, stop: number, step: number) =>
             Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
-        
+        const response = responses[0];
 
-        const weathersData: IGetWeatherDetailsResponseDTO[] = [] 
-        responses.forEach(response => {
-            const utcOffsetSeconds = response.utcOffsetSeconds();
+        const utcOffsetSeconds = response.utcOffsetSeconds();
         
         const hourly = response.hourly()!;
         const daily = response.daily()!;
         
-        
-        const weatherData: IGetWeatherDetailsResponseDTO = {
+        const weatherData = {
         
             hourly: {
                 time: range(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()).map(
@@ -97,9 +95,7 @@ export class WeatherApi {
                 sunset: daily.variables(3)!.valuesArray()!,
             },
         
-        };
-        weathersData.push(weatherData)
-        })
-        return weathersData[0]
+        }
+        return weatherData
     }
 }
