@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './weatherDetailsCard.module.scss'
 interface WeatherDetailsDailyCardProps {
+  key: number,
   date: Date
   maxTemperature: string | undefined
   minTemperature: string | undefined
@@ -8,20 +9,25 @@ interface WeatherDetailsDailyCardProps {
   sunset: number | undefined
   setDate: (time: Date) => void
   imgSrc: string
+  selectedDay: Date
 }
 
 const WeatherDetailsDailyCard: React.FC<WeatherDetailsDailyCardProps> = ({
+  key,
   date,
   maxTemperature,
   minTemperature,
   setDate,
-  imgSrc
+  imgSrc,
+  selectedDay
 }) => {
   const dayOfWeek = new Intl.DateTimeFormat('en-GB', { weekday: 'long' }).format(date);
   const day = new Intl.DateTimeFormat('en-GB', { day: 'numeric' }).format(date);
   const month = new Intl.DateTimeFormat('en-GB', { month: 'long' }).format(date);
   return (
-    <div className={styles.dailyCard} onClick={() => setDate(date)}>
+    <div key={key} className={`${styles.dailyCard} ${ selectedDay === date ? styles.box_dark : ''}`} onClick={() => {
+      setDate(date)
+      }}>
       <div className={styles.date}>
         <p>{dayOfWeek}</p>
         <p style={{fontSize: '20px'}}><strong>{day}</strong></p>

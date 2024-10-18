@@ -26,6 +26,15 @@
         }
         .hourly{
             display: flex;
+            width: 100%;
+            justify-content: space-between;
         }
+    }
+    .arrow{
+        opacity: 1;
+    }
+    .arrow:hover{
+        opacity: 0.5;
+        cursor: pointer;
     }
 }

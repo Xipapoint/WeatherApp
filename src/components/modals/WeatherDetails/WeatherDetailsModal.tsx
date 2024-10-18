@@ -4,46 +4,46 @@ import styles from './weatherDetailsModal.module.scss'
 import { IGetWeatherDetailsRequestDTO } from '../../../dto/request/GetWeatherDetailsRequestDTO'
 import { WeatherApi } from '../../../api/weatherApi'
 import { IGetWeatherDetailsResponseDTO } from '../../../dto/response/GetWeatherDetailsResponseDTO'
-import useErrorToast from '../../../utils/hooks/toast'
 import WeatherDetailsDailyCard from './WeatherDetailsCard/daily/WeatherDetailsDailyCard'
 import { ToastContainer, Bounce } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import WeatherDetailsHourlyCard from './WeatherDetailsCard/hourly/WeatherDetailsHourlyCard'
+import { IGetRandomUserResponseDTO } from '../../../dto/response/GetRandomUserResponseDTO'
 interface WeatherDetailsModalProps{
     onClose: () => void
     userData: IGetWeatherDetailsRequestDTO
+    getNextUser: (index: number) => IGetRandomUserResponseDTO | undefined
+    index: number
 }
 
 
 
-const WeatherDetailsModal: React.FC<WeatherDetailsModalProps> = ({onClose, userData}) => {
-  const {handleError} = useErrorToast()
+const WeatherDetailsModal: React.FC<WeatherDetailsModalProps> = ({onClose, userData, getNextUser, index}) => {
   const [weatherDetailState, weatherDetailDispatch] = useReducer(weatherDetailReducer, initialWeatherDetailState)
+  const [userIndex, setUserIndex] = useState(index)
+  const [useUserData, setUseUserData] = useState(userData)
   const [selectedDay, setSelectedDay] = useState<Date>(new Date(Date.now()))
   const fetchWeatherDetails = async () => {
     try {
           console.log("user data in modal: ", userData);
-          
           weatherDetailDispatch({type: 'FETCH_WEATHER_START'})
           const weatherApi = new WeatherApi()
           console.log("starting fetching");
           
-          const weatherData: IGetWeatherDetailsResponseDTO = await weatherApi.getWeatherDetails(userData)
+          const weatherData: IGetWeatherDetailsResponseDTO = await weatherApi.getWeatherDetails(useUserData)
           console.log("weather data for modal: ", weatherData);
           
           weatherDetailDispatch({type: 'FETCH_WEATHER_SUCCESS', payload: weatherData})
         } catch (error) {
-          handleError(error)
           weatherDetailDispatch({type:'FETCH_WEATHER_FAILURE', payload: (error as string)})
         }
       }
       
       const filterHourlyDataBySelectedDay = () => {
         if(!weatherDetailState?.weatherData){
-          handleError("Couldnt get weather data from the server")
           return
         }
         if(!weatherDetailState?.weatherData?.hourly){
-          handleError("Couldnt get hourly data from the server")
           return
         }
         const { hourly } = weatherDetailState.weatherData
@@ -56,7 +56,7 @@ const WeatherDetailsModal: React.FC<WeatherDetailsModalProps> = ({onClose, userD
           cloudCover: hourly.cloudCover[index],
           windDirection: hourly.windDirection10m[index],
         }))
-        .filter(hour => new Date(hour.time).toDateString() === selectedDay.toDateString())
+        .filter((hour, index) => new Date(hour.time).toDateString() === selectedDay.toDateString() && index % 3 === 0)
       }
 
       const getWeatherIcon = (index: number): string => {
@@ -68,14 +68,32 @@ const WeatherDetailsModal: React.FC<WeatherDetailsModalProps> = ({onClose, userD
         } else if(cloudCover[index] > 60) return '/large/heavy_cloudy.png'
         return '/large/sun_large.png'
       }
-
+      useEffect(() => {
+        fetchWeatherDetails()
+      }, [useUserData])
     useEffect(() => {
-      fetchWeatherDetails()
+
       filterHourlyDataBySelectedDay()
-    },[])
+    },[selectedDay])
+
+    const handleGetPreviousUser = () => {
+      if(userIndex - 1 < 0) return
+      const user = getNextUser(userIndex - 1)
+      if(!user) return
+      setUserIndex(userIndex => userIndex += 1)
+      setUseUserData(user.location.coordinates)
+    }
+    const handleGetNextUser = () => {
+      const user = getNextUser(userIndex + 1)
+      if(!user) return
+      setUserIndex(userIndex => userIndex += 1)
+      setUseUserData(user.location.coordinates)
+    }
+    
 
   return (
     <div className={styles.overlay}>
+      <img className={styles.arrow} onClick={handleGetPreviousUser} src="/large/left-arrow.PNG" alt="" width={128} height={128} />
       <div className={styles.modal}>
         <img style={{cursor: 'pointer'} } onClick={onClose} src="/small/close.png" alt="Close" width={16} height={16} />
         <div className={styles.daily}>
@@ -90,18 +108,20 @@ const WeatherDetailsModal: React.FC<WeatherDetailsModalProps> = ({onClose, userD
               sunset={-1}
               setDate={() => setSelectedDay(time)}
               imgSrc={getWeatherIcon(index)}
+              selectedDay={selectedDay}
               />
             ))}
           </div>
 
         <h4>Hourly Data for {selectedDay.toDateString()}:</h4>
         <div className={styles.hourly}>
-          {/* {filterHourlyDataBySelectedDay()?.map((hour, index) => (
+          {filterHourlyDataBySelectedDay()?.map((hour, index) => (
             <WeatherDetailsHourlyCard key={index} {...hour} />
-          ))} */}
+          ))}
 
         </div>
       </div>
+      <img onClick={handleGetNextUser} className={styles.arrow} src="/large/right-arrow.png" alt="" width={128} height={128} />
       <ToastContainer 
         position="top-center"
         autoClose={5000}

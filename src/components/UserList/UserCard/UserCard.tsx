@@ -3,9 +3,10 @@ import styles from './userCard.module.scss'
 import useWindowSize from "../../../utils/hooks/useWindowSize";
 import { useModal } from "../../../utils/hooks/useModal";
 import WeatherDetailsModal from "../../modals/WeatherDetails/WeatherDetailsModal";
+import { IGetRandomUserResponseDTO } from "../../../dto/response/GetRandomUserResponseDTO";
 interface UserCardProps {
   user: {
-    key: string
+    key: number
     gender: string
     name: {
       title: string
@@ -28,6 +29,7 @@ interface UserCardProps {
     email: string
   };
   weather?: IGetWeatherForCardResponseDTO | null;
+  getNextUser: (index: number) => IGetRandomUserResponseDTO | undefined
 }
 
 const getWeatherIcon = (weather: {
@@ -49,13 +51,13 @@ const getWeatherIcon = (weather: {
   return '/large/sun_large.png'
 }
 
-const UserCard: React.FC<UserCardProps> = ({ user, weather }) => {
+const UserCard: React.FC<UserCardProps> = ({ user, weather, getNextUser }) => {
   const { isModalOpen, openModal, closeModal, modalContent } = useModal();
   const { width } = useWindowSize(500)
   const weatherIconSize = width <= 480 ? 64 : 90
   const userIconSize = width <= 480 ? 128 : 128
   const handleOpenModal = () => {
-    openModal(<WeatherDetailsModal onClose={closeModal} userData={user.coordinates}/>)
+    openModal(<WeatherDetailsModal getNextUser={getNextUser} index={user.key} onClose={closeModal} userData={user.coordinates}/>)
   }
   return (
     <div key={user.key} className={styles.userCard}>

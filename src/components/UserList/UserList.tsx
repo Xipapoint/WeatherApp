@@ -83,6 +83,13 @@ const UserList = () => {
         }
       }, [userState.loading, weatherCardState.loading])
 
+      const getNextUser = (index: number) => {
+        if(index + 1 > userState.users.length) return
+        console.log("get user: ", userState.users[index]);
+        
+        return userState.users[index]
+      }
+
   return (
     <>
       {userState.loading && <p>Loading users...</p>}
@@ -91,7 +98,7 @@ const UserList = () => {
         {userState.users.map((user, index) => (
           <div key={index} >
             <UserCard user={{
-              key: user.login.uuid as string,
+              key:  index,
               gender: user.gender,
               name: user.name,
               location: {
@@ -103,7 +110,8 @@ const UserList = () => {
               email: user.email,
               
             }}
-            weather={weatherCardState.weatherData[index]}           
+            weather={weatherCardState.weatherData[index]}      
+            getNextUser={getNextUser}     
             />
           </div>
 

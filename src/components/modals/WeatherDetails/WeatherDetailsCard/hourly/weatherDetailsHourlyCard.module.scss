@@ -1,0 +1,11 @@
+.hourlyCard{
+    border-right: 1px solid #d9d9d9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-inline: 7px;
+    p{
+        margin: 0;
+        margin-bottom: 5px;
+    }
+}
