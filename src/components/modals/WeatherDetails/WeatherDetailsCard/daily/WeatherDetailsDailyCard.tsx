@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { memo } from 'react'
 import styles from './weatherDetailsCard.module.scss'
+import Temperature from '../../../../Temperature/Temperature'
 interface WeatherDetailsDailyCardProps {
   key: number,
   date: Date
@@ -9,7 +10,7 @@ interface WeatherDetailsDailyCardProps {
   sunset: number | undefined
   setDate: (time: Date) => void
   imgSrc: string
-  selectedDay: Date
+  selectedDay: boolean
 }
 
 const WeatherDetailsDailyCard: React.FC<WeatherDetailsDailyCardProps> = ({
@@ -25,9 +26,9 @@ const WeatherDetailsDailyCard: React.FC<WeatherDetailsDailyCardProps> = ({
   const day = new Intl.DateTimeFormat('en-GB', { day: 'numeric' }).format(date);
   const month = new Intl.DateTimeFormat('en-GB', { month: 'long' }).format(date);
   return (
-    <div key={key} className={`${styles.dailyCard} ${ selectedDay === date ? styles.box_dark : ''}`} onClick={() => {
+    <div key={key} className={`${styles.dailyCard} ${ selectedDay ? styles.box_dark : ''}`} onClick={() => {
       setDate(date)
-      }}>
+    }}>
       <div className={styles.date}>
         <p>{dayOfWeek}</p>
         <p style={{fontSize: '20px'}}><strong>{day}</strong></p>
@@ -35,13 +36,12 @@ const WeatherDetailsDailyCard: React.FC<WeatherDetailsDailyCardProps> = ({
       </div>
       <img src={imgSrc} alt="" width={30} height={30} />
       <div className={styles.temp}>
-        <p>Max: <strong style={{fontSize: '14px'}}>{maxTemperature}°</strong></p>
-        <p>Min: <strong style={{fontSize: '14px'}}>{minTemperature}°</strong></p>
-
+        <Temperature>Max: <strong style={{fontSize: '14px'}}>{maxTemperature}°</strong></Temperature>
+        <Temperature>Min: <strong style={{fontSize: '14px'}}>{minTemperature}°</strong></Temperature>
       </div>
   </div>
   )
 }
 
 
-export default WeatherDetailsDailyCard;
+export default memo(WeatherDetailsDailyCard);

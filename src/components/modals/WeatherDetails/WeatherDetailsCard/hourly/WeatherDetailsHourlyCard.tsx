@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { memo } from 'react'
 import styles from './weatherDetailsHourlyCard.module.scss'
+import Temperature from '../../../../Temperature/Temperature';
 interface WeatherDetailsHourlyCardProps {
   key: number
   time: Date;
@@ -39,11 +40,11 @@ const WeatherDetailsHourlyCard: React.FC<WeatherDetailsHourlyCardProps> = ({
     <div key={key} className={styles.hourlyCard} style={{ marginBottom: '8px' }}>
       <p>Time: {time.getHours()}:00</p>
       <img src={getWeatherIcon({rain, snowfall, cloudCover})} alt="" width={40} height={40} />
-      <p>Temperature: {temperature.toFixed(1)}°</p>
+      <Temperature>Temperature: {temperature.toFixed(1)}°</Temperature>
       <p>Wind Direction: {Math.round(windDirection)}°</p>
   </div>
   )
 }
 
 
-export default WeatherDetailsHourlyCard;
+export default memo(WeatherDetailsHourlyCard);

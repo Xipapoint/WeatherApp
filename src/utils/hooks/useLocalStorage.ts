@@ -1,30 +1,29 @@
+import { useCallback } from 'react';
+
 export function useLocalStorage() {
-    function setItem<T>(key: string, value: T){
+    const setItem = useCallback(<T>(key: string, value: T) => {
         try {
-            localStorage.setItem(key, JSON.stringify(value))
-        } catch (error) {
-            console.log(error);
-            
-        }
-    }
-
-    function getItem(key: string){
-        try {
-           return localStorage.getItem(key)
-        } catch (error) {
-            console.log(error);
-            
-        }
-    }
-
-    function deleteItem(key: string){
-        try {
-            localStorage.removeItem(key)
+            localStorage.setItem(key, JSON.stringify(value));
         } catch (error) {
             console.log(error);
         }
-    }
+    }, []);
 
-    return { setItem, getItem, deleteItem }
+    const getItem = useCallback((key: string) => {
+        try {
+            return localStorage.getItem(key);
+        } catch (error) {
+            console.log(error);
+        }
+    }, []);
 
+    const deleteItem = useCallback((key: string) => {
+        try {
+            localStorage.removeItem(key);
+        } catch (error) {
+            console.log(error);
+        }
+    }, []);
+
+    return { setItem, getItem, deleteItem };
 }

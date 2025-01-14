@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast, ToastPosition } from 'react-toastify';
 import { AxiosError } from 'axios';
 import AppError from '../../error/AppError';
@@ -9,21 +9,21 @@ interface UseErrorToastResult {
   error: string | null;
   clearError: () => void;
 }
+const toastErrorConfiguration = {
+  position: "top-center" as ToastPosition,
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "dark",
+}
 
 const useErrorToast = (): UseErrorToastResult => {
   const [error, setError] = useState<string | null>(null);
-  const toastErrorConfiguration = {
-    position: "top-center" as ToastPosition,
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "dark",
-  }
 
-  const handleError = (error: unknown) => {
+  const handleError = useCallback((error: unknown) => {
     if (error instanceof AppError) {
       toast.error(`${error.errorType}: ${error.message}`, toastErrorConfiguration);
       setError(`${error.errorType}: ${error.message}`);
@@ -47,13 +47,15 @@ const useErrorToast = (): UseErrorToastResult => {
       toast.error('An unknown error occurred.', toastErrorConfiguration);
       setError('An unknown error occurred.');
     }
-  };
+  }, [])
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     setError(null);
-  };
+  }, [])
 
-  return { handleError, error, clearError };
+  const value = useMemo(() => {return {handleError, error, clearError} }, [clearError, error, handleError])
+
+  return value;
 };
 
 export default useErrorToast;
